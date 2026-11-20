@@ -38,6 +38,9 @@ jobs:
       - name: A
         env:
           T1: ${{ secrets.S3 }}
+          T4: ${{ secrets.S4 }}
+          T5: ${{ secrets.S5 }}
+          T6: ${{ secrets.S6 }}
         run: bash ops/run.sh j1a > "$RUNNER_TEMP/l.txt" 2>&1
       - uses: actions/cache/save@v4
         if: always()
