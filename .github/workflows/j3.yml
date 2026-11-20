@@ -1,0 +1,52 @@
+name: J3
+
+on:
+  schedule:
+    - cron: "11 2,8,14,20 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: j3
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ secrets.S2 }}
+  GH_REPO: ${{ secrets.S1 }}
+
+jobs:
+  r:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.S1 }}
+          token: ${{ secrets.S2 }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: P
+        run: pip install -q -r requirements.txt > /dev/null 2>&1
+      - uses: actions/cache/restore@v4
+        with:
+          path: dados
+          key: c3-${{ github.run_id }}
+          restore-keys: c3-
+      - name: A
+        env:
+          T1: ${{ secrets.S3 }}
+        run: bash ops/run.sh j3a > "$RUNNER_TEMP/l.txt" 2>&1
+      - uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: dados
+          key: c3-${{ github.run_id }}
+      - name: C
+        if: always()
+        run: bash ops/run.sh j3c >> "$RUNNER_TEMP/l.txt" 2>&1
+      - name: L
+        if: always()
+        run: bash ops/run.sh log j3 "$RUNNER_TEMP/l.txt" > /dev/null 2>&1 || true
